@@ -27,7 +27,7 @@
 
       form {
         position: fixed;
-        top: 50%;
+        top: 40%;
         left: 50%;
         transform: translate(-50%, -50%);
       }
@@ -41,7 +41,7 @@
         display: flex;
       }
 
-      input {
+      #url {
         width: 600px;
         height: 60px;
         box-sizing: border-box;
@@ -61,6 +61,7 @@
         text-transform: uppercase;
         padding: 0;
         border: none;
+        cursor: pointer;
       }
 
       button:hover {
@@ -76,7 +77,7 @@
           font-size: 22px;
         }
 
-        input {
+        #url {
           width: 250px;
           height: 50px;
           font-size: 18px;
@@ -93,9 +94,9 @@
   </head>
   <body>
     <form>
-      <label for="search">Simple web proxy</label>
+      <label for="url">Simple web proxy</label>
       <div>
-        <input id="search" placeholder="https://some-url.here" />
+        <input id="url" placeholder="https://some-url.here" />
         <button type="submit">Go</button>
       </div>
     </form>
