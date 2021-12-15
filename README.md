@@ -1,6 +1,6 @@
 ## Description
 
-Simple web proxy - allows to open any site on behalf of the server.
+Simple web proxy - opens websites on behalf of the server.
 
 Site content is redirected back to the user browser.
 
