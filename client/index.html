@@ -107,10 +107,15 @@
     </style>
   </head>
   <body>
-    <form>
+    <form action="/p" method="post">
       <label for="url">Simple web proxy</label>
       <div>
-        <input id="url" placeholder="https://some-url.here" />
+        <input
+          id="url"
+          name="url"
+          placeholder="https://some-url.here"
+          required
+        />
         <button type="submit">Go</button>
       </div>
     </form>
