@@ -1,6 +1,6 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
-import { Observable, of, switchMap } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 import { ProxyRepository } from './proxy.repository';
 
 @Injectable()
@@ -10,33 +10,44 @@ export class ProxyService {
     private httpService: HttpService,
   ) {}
 
-  generateProxyIdForUrl(url: string): Observable<string> {
+  async generateProxyIdForUrl(url: string): Promise<string> {
     const proxyId = this.proxyRepository.add(url);
 
     return proxyId;
   }
 
-  getContentByProxyId(
+  async getContentByProxyId(
     proxyId: string,
     getProxyUrlForId: (id: string) => string,
-  ): Observable<string> {
-    return this.proxyRepository.getById(proxyId).pipe(
-      switchMap((url) => this.httpService.get<string>(url)),
-      switchMap((res) => this.getNormalizedContent(res.data, getProxyUrlForId)),
+  ): Promise<string> {
+    const realUrl: string = await this.proxyRepository.getById(proxyId);
+    const response = await firstValueFrom(
+      this.httpService.get<string>(realUrl),
     );
+    const result = this.getNormalizedContent(
+      response.data,
+      realUrl,
+      getProxyUrlForId,
+    );
+
+    return result;
   }
 
-  private getNormalizedContent(
-    initialContent: string,
+  private async getNormalizedContent(
+    responseContent: string,
+    realUrl: string,
     getProxyUrlForId: (id: string) => string,
-  ): Observable<string> {
+  ): Promise<string> {
+    const result = responseContent;
+    const normalizedRealUrl = realUrl.replace(/\/$/, '');
     const relativeSrcRegExp = /src=\"(\/.*?)\"/g;
-    const relativeSrcMatches = initialContent.matchAll(relativeSrcRegExp);
+    const relativeSrcMatches = result.matchAll(relativeSrcRegExp);
 
     [...relativeSrcMatches].forEach((match: RegExpMatchArray) => {
-      console.log(match);
+      const fullUrl = normalizedRealUrl + match[1];
+      console.log(fullUrl);
     });
 
-    return of(initialContent);
+    return result;
   }
 }

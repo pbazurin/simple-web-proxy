@@ -1,6 +1,5 @@
 import { Body, Controller, Get, Param, Post, Res } from '@nestjs/common';
 import { Response } from 'express';
-import { catchError, map, Observable, of } from 'rxjs';
 import { ProxyService } from './proxy.service';
 
 @Controller('p')
@@ -8,39 +7,34 @@ export class ProxyController {
   constructor(private readonly proxyService: ProxyService) {}
 
   @Get(':id')
-  getProxyContentById(
+  async getProxyContentById(
     @Param('id') proxyId: string,
     @Res() response: Response,
-  ): Observable<void> {
+  ): Promise<void> {
     try {
-      return this.proxyService
-        .getContentByProxyId(proxyId, (id) => `/p/${id}`)
-        .pipe(
-          map((content) => {
-            response.send(content);
-          }),
-          catchError(() => {
-            response.send('Failed to open url');
-            return of(null);
-          }),
-        );
+      const content = await this.proxyService.getContentByProxyId(
+        proxyId,
+        (id) => `/p/${id}`,
+      );
+
+      response.send(content);
     } catch {
       response.redirect('/');
     }
   }
 
   @Post()
-  createProxy(
+  async createProxy(
     @Body('url') url: string,
     @Res() response: Response,
-  ): Observable<void> {
+  ): Promise<void> {
     if (!url) {
       response.redirect('/');
-      return of(null);
+      return;
     }
 
-    return this.proxyService
-      .generateProxyIdForUrl(url)
-      .pipe(map((proxyId: string) => response.redirect(`/p/${proxyId}`)));
+    const proxyId: string = await this.proxyService.generateProxyIdForUrl(url);
+
+    response.redirect(`/p/${proxyId}`);
   }
 }

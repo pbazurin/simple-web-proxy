@@ -1,26 +1,25 @@
 import { Injectable } from '@nestjs/common';
-import { Observable, of } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class ProxyRepository {
   private idToContentMap: { [id: string]: string } = {};
 
-  add(content: string): Observable<string> {
+  async add(content: string): Promise<string> {
     const newId = uuidv4();
 
     this.idToContentMap[newId] = content;
 
-    return of(newId);
+    return newId;
   }
 
-  getById(id: string): Observable<string> {
+  async getById(id: string): Promise<string> {
     const value = this.idToContentMap[id];
 
     if (!value) {
       throw Error('Item not found');
     }
 
-    return of(value);
+    return value;
   }
 }
