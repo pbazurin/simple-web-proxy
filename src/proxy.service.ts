@@ -1,7 +1,6 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
-import { map, Observable } from 'rxjs';
-import { v4 as uuidv4 } from 'uuid';
+import { Observable, of, switchMap } from 'rxjs';
 import { ProxyRepository } from './proxy.repository';
 
 @Injectable()
@@ -11,21 +10,33 @@ export class ProxyService {
     private httpService: HttpService,
   ) {}
 
-  generateProxyId(url: string): string {
-    const proxyId = uuidv4();
-
-    this.proxyRepository.add(proxyId, url);
+  generateProxyIdForUrl(url: string): Observable<string> {
+    const proxyId = this.proxyRepository.add(url);
 
     return proxyId;
   }
 
-  getContentByProxyId(proxyId: string): Observable<string> {
-    const url = this.proxyRepository.getById(proxyId);
-
-    return this.httpService.get<string>(url).pipe(
-      map((res) => {
-        return res.data;
-      }),
+  getContentByProxyId(
+    proxyId: string,
+    getProxyUrlForId: (id: string) => string,
+  ): Observable<string> {
+    return this.proxyRepository.getById(proxyId).pipe(
+      switchMap((url) => this.httpService.get<string>(url)),
+      switchMap((res) => this.getNormalizedContent(res.data, getProxyUrlForId)),
     );
+  }
+
+  private getNormalizedContent(
+    initialContent: string,
+    getProxyUrlForId: (id: string) => string,
+  ): Observable<string> {
+    const relativeSrcRegExp = /src=\"(\/.*?)\"/g;
+    const relativeSrcMatches = initialContent.matchAll(relativeSrcRegExp);
+
+    [...relativeSrcMatches].forEach((match: RegExpMatchArray) => {
+      console.log(match);
+    });
+
+    return of(initialContent);
   }
 }
