@@ -1,6 +1,8 @@
-import { Body, Controller, Get, Param, Post, Res } from '@nestjs/common';
-import { Response } from 'express';
+import { Body, Controller, Get, Param, Post, Req, Res } from '@nestjs/common';
+import { Request, Response } from 'express';
 import { ProxyService } from './proxy.service';
+
+const getProxyUrlForId = (id) => `/p/${id}`;
 
 @Controller('p')
 export class ProxyController {
@@ -9,15 +11,21 @@ export class ProxyController {
   @Get(':id')
   async getProxyContentById(
     @Param('id') proxyId: string,
+    @Req() request: Request,
     @Res() response: Response,
   ): Promise<void> {
     try {
-      const content = await this.proxyService.getContentByProxyId(
+      const proxyResponse = await this.proxyService.getContentByProxyId(
         proxyId,
-        (id) => `/p/${id}`,
+        request.headers,
+        getProxyUrlForId,
       );
 
-      response.send(content);
+      response.status(proxyResponse.status);
+      Object.keys(proxyResponse.headers).forEach((headerName: string) =>
+        response.setHeader(headerName, proxyResponse.headers[headerName]),
+      );
+      response.send(proxyResponse.body);
     } catch {
       response.redirect('/');
     }
@@ -35,6 +43,6 @@ export class ProxyController {
 
     const proxyId: string = await this.proxyService.generateProxyIdForUrl(url);
 
-    response.redirect(`/p/${proxyId}`);
+    response.redirect(getProxyUrlForId(proxyId));
   }
 }
