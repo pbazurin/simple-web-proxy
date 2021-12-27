@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CustomLoggerService } from 'src/services/custom-logger.service';
 import { v5 as uuidv5, validate as uuidValidate } from 'uuid';
 
@@ -26,13 +30,13 @@ export class ProxyRepository {
 
   async getById(id: string): Promise<string> {
     if (!this.isValidIdFormat(id)) {
-      throw new Error(`Invalid id format "${id}"`);
+      throw new BadRequestException(`Invalid id format "${id}"`);
     }
 
     const value = this.idToContentMap[id];
 
     if (!value) {
-      throw Error(`Item with "${id}" doesn't exist`);
+      throw new NotFoundException(`Item with "${id}" doesn't exist`);
     }
 
     return value;

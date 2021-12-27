@@ -33,8 +33,8 @@ export class ProxyController {
       );
       response.send(proxyResponse.body);
     } catch (error) {
-      this.loggerService.error(error, error.stack);
-      response.redirect('/');
+      this.loggerService.warn(error);
+      response.redirect('/?failed');
     }
   }
 
@@ -44,7 +44,8 @@ export class ProxyController {
     @Res() response: Response,
   ): Promise<void> {
     if (!url) {
-      response.redirect('/');
+      this.loggerService.warn(`Url is empty, redirected to home page`);
+      response.redirect('/?empty');
       return;
     }
 

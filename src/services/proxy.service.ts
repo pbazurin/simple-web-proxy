@@ -1,12 +1,12 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable } from '@nestjs/common';
-import { firstValueFrom } from 'rxjs';
-import { AbsoluteUrlProcessor } from 'src/processors/absolute-url.processor';
-import { Processor } from 'src/processors/processor';
-import { RelativeUrlProcessor } from 'src/processors/relative-url.processor';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { catchError, firstValueFrom, throwError } from 'rxjs';
 import { ProxyResponse } from '../models/proxy-response';
 import { ProxyRepository } from '../repositories/proxy.repository';
 import { CustomLoggerService } from './custom-logger.service';
+import { AbsoluteUrlProcessor } from './processors/absolute-url.processor';
+import { Processor } from './processors/processor';
+import { RelativeUrlProcessor } from './processors/relative-url.processor';
 import { UtilsService } from './utils.service';
 
 @Injectable()
@@ -37,11 +37,20 @@ export class ProxyService {
     const realUrl: string = await this.proxyRepository.getById(proxyId);
     this.loggerService.log(`Requesting url "${realUrl}"...`);
     const response = await firstValueFrom(
-      this.httpService.get<string>(realUrl, {
-        headers: this.processRequestHeaders(requestHeaders) as any,
-        responseType: 'arraybuffer',
-        validateStatus: (status: number) => status < 500,
-      }),
+      this.httpService
+        .get<string>(realUrl, {
+          headers: this.processRequestHeaders(requestHeaders) as any,
+          responseType: 'arraybuffer',
+          validateStatus: (status: number) => status < 500,
+        })
+        .pipe(
+          catchError(() =>
+            throwError(
+              () =>
+                new BadRequestException(`Failed to request url "${realUrl}"`),
+            ),
+          ),
+        ),
     );
     this.loggerService.log(`Received response for url "${realUrl}"`);
     const result = await this.getNormalizedContent(

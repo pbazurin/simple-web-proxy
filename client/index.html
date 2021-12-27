@@ -46,7 +46,7 @@
         transform: translate(-50%, -50%);
       }
 
-      label {
+      label[for] {
         font-size: 30px;
         color: white;
       }
@@ -86,8 +86,15 @@
         background-color: #0e191d;
       }
 
+      #error {
+        position: absolute;
+        font-size: 20px;
+        color: #9a7777;
+        display: none;
+      }
+
       @media (max-width: 750px) {
-        label {
+        label[for] {
           font-size: 22px;
         }
 
@@ -102,6 +109,10 @@
           width: 60px;
           height: 50px;
           font-size: 18px;
+        }
+
+        #error {
+          font-size: 16px;
         }
       }
     </style>
@@ -118,6 +129,12 @@
         />
         <button type="submit">Go</button>
       </div>
+      <label id="error">Failed to open</label>
     </form>
+    <script type="text/javascript">
+      if (location.search) {
+        document.getElementById('error').style.display = 'inline';
+      }
+    </script>
   </body>
 </html>
