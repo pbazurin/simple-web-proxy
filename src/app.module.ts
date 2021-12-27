@@ -8,6 +8,7 @@ import { AllExceptionsFilter } from './filters/all-exceptions.filter';
 import { ProxyRepository } from './repositories/proxy.repository';
 import { CustomLoggerService } from './services/custom-logger.service';
 import { AbsoluteUrlProcessor } from './services/processors/absolute-url.processor';
+import { IntegrityProcessor } from './services/processors/integrity.processor';
 import { RelativeUrlProcessor } from './services/processors/relative-url.processor';
 import { ProxyService } from './services/proxy.service';
 import { UtilsService } from './services/utils.service';
@@ -27,6 +28,7 @@ import { UtilsService } from './services/utils.service';
     ProxyRepository,
     AbsoluteUrlProcessor,
     RelativeUrlProcessor,
+    IntegrityProcessor,
     {
       provide: APP_FILTER,
       useClass: AllExceptionsFilter,

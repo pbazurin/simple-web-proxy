@@ -5,6 +5,7 @@ import { ProxyResponse } from '../models/proxy-response';
 import { ProxyRepository } from '../repositories/proxy.repository';
 import { CustomLoggerService } from './custom-logger.service';
 import { AbsoluteUrlProcessor } from './processors/absolute-url.processor';
+import { IntegrityProcessor } from './processors/integrity.processor';
 import { Processor } from './processors/processor';
 import { RelativeUrlProcessor } from './processors/relative-url.processor';
 import { UtilsService } from './utils.service';
@@ -18,6 +19,7 @@ export class ProxyService {
     private loggerService: CustomLoggerService,
     private absoluteUrlProcessor: AbsoluteUrlProcessor,
     private relativeUrlProcessor: RelativeUrlProcessor,
+    private integrityProcessor: IntegrityProcessor,
   ) {
     loggerService.setContext(ProxyService.name);
   }
@@ -79,6 +81,8 @@ export class ProxyService {
       }
     });
 
+    result['accept-encoding'] = 'gzip, deflate';
+
     return result;
   }
 
@@ -108,7 +112,11 @@ export class ProxyService {
 
     switch (true) {
       case contentType.includes('html'):
-        processors = [this.relativeUrlProcessor, this.absoluteUrlProcessor];
+        processors = [
+          this.relativeUrlProcessor,
+          this.absoluteUrlProcessor,
+          this.integrityProcessor,
+        ];
         break;
       case contentType.includes('javascript'):
       case contentType.includes('css'):
