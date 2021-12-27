@@ -1,12 +1,18 @@
 import { Body, Controller, Get, Param, Post, Req, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { ProxyService } from './proxy.service';
+import { CustomLoggerService } from 'src/services/custom-logger.service';
+import { ProxyService } from '../services/proxy.service';
 
 const getProxyUrlForId = (id) => `/p/${id}`;
 
 @Controller('p')
 export class ProxyController {
-  constructor(private readonly proxyService: ProxyService) {}
+  constructor(
+    private proxyService: ProxyService,
+    private loggerService: CustomLoggerService,
+  ) {
+    this.loggerService.setContext(ProxyController.name);
+  }
 
   @Get(':id')
   async getProxyContentById(
@@ -26,7 +32,8 @@ export class ProxyController {
         response.setHeader(headerName, proxyResponse.headers[headerName]),
       );
       response.send(proxyResponse.body);
-    } catch {
+    } catch (error) {
+      this.loggerService.warn(error);
       response.redirect('/');
     }
   }

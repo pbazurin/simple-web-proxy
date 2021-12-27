@@ -1,18 +1,21 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
-import { ProxyResponse } from './models/proxy-response';
-import { ProxyRepository } from './proxy.repository';
+import { ProxyResponse } from '../models/proxy-response';
+import { ProxyRepository } from '../repositories/proxy.repository';
+import { UtilsService } from './utils.service';
 
 @Injectable()
 export class ProxyService {
   constructor(
     private proxyRepository: ProxyRepository,
     private httpService: HttpService,
+    private utilsService: UtilsService,
   ) {}
 
   async generateProxyIdForUrl(url: string): Promise<string> {
-    const proxyId = this.proxyRepository.add(url);
+    const normalizedUrl = this.utilsService.removeTrailingSlashes(url);
+    const proxyId = this.proxyRepository.add(normalizedUrl);
 
     return proxyId;
   }
@@ -80,14 +83,22 @@ export class ProxyService {
     }
 
     let result = responseContent.toString('utf-8');
-    const normalizedRealUrl = realUrl.replace(/\/$/, '');
-    const relativeSrcRegExp = /\"(\/.*?)\"/g;
-    const relativeSrcMatches = result.matchAll(relativeSrcRegExp);
 
-    for (const match of [...relativeSrcMatches]) {
-      const matchedUrl = match[1];
-      const fullUrl = normalizedRealUrl + matchedUrl;
+    // relative urls
+    const relativeUrlMatches = result.matchAll(/\"(\/.*?)\"/g);
+
+    for (const match of [...relativeUrlMatches]) {
+      const fullUrl = realUrl + match[1];
       const newId = await this.generateProxyIdForUrl(fullUrl);
+
+      result = result.replace(match[0], `"${getProxyUrlForId(newId)}"`);
+    }
+
+    // absolute urls
+    const absoluteUrlMatches = result.matchAll(/\"(http.*?)\"/g);
+
+    for (const match of [...absoluteUrlMatches]) {
+      const newId = await this.generateProxyIdForUrl(match[1]);
 
       result = result.replace(match[0], `"${getProxyUrlForId(newId)}"`);
     }
