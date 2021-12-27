@@ -33,7 +33,7 @@ export class ProxyController {
       );
       response.send(proxyResponse.body);
     } catch (error) {
-      this.loggerService.warn(error);
+      this.loggerService.error(error, error.stack);
       response.redirect('/');
     }
   }

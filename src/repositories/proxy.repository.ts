@@ -7,7 +7,7 @@ export class ProxyRepository {
   private idToContentMap: { [id: string]: string } = {};
 
   constructor(private loggerService: CustomLoggerService) {
-    this.loggerService.setContext(ProxyRepository.name);
+    loggerService.setContext(ProxyRepository.name);
   }
 
   isValidIdFormat(id: string): boolean {
@@ -17,7 +17,7 @@ export class ProxyRepository {
   async add(value: string): Promise<string> {
     const newId = uuidv5(value, uuidv5.URL);
 
-    this.loggerService.log(`generated id "${newId}" for "${value}"`);
+    this.loggerService.log(`Generated id "${newId}" for "${value}"`);
 
     this.idToContentMap[newId] = value;
 
@@ -32,7 +32,7 @@ export class ProxyRepository {
     const value = this.idToContentMap[id];
 
     if (!value) {
-      throw Error(`Item with id "${id}" not found`);
+      throw Error(`Item with "${id}" doesn't exist`);
     }
 
     return value;

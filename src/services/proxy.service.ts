@@ -1,8 +1,12 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
+import { AbsoluteUrlProcessor } from 'src/processors/absolute-url.processor';
+import { Processor } from 'src/processors/processor';
+import { RelativeUrlProcessor } from 'src/processors/relative-url.processor';
 import { ProxyResponse } from '../models/proxy-response';
 import { ProxyRepository } from '../repositories/proxy.repository';
+import { CustomLoggerService } from './custom-logger.service';
 import { UtilsService } from './utils.service';
 
 @Injectable()
@@ -11,7 +15,12 @@ export class ProxyService {
     private proxyRepository: ProxyRepository,
     private httpService: HttpService,
     private utilsService: UtilsService,
-  ) {}
+    private loggerService: CustomLoggerService,
+    private absoluteUrlProcessor: AbsoluteUrlProcessor,
+    private relativeUrlProcessor: RelativeUrlProcessor,
+  ) {
+    loggerService.setContext(ProxyService.name);
+  }
 
   async generateProxyIdForUrl(url: string): Promise<string> {
     const normalizedUrl = this.utilsService.removeTrailingSlashes(url);
@@ -26,6 +35,7 @@ export class ProxyService {
     getProxyUrlForId: (id: string) => string,
   ): Promise<ProxyResponse> {
     const realUrl: string = await this.proxyRepository.getById(proxyId);
+    this.loggerService.log(`Requesting url "${realUrl}"...`);
     const response = await firstValueFrom(
       this.httpService.get<string>(realUrl, {
         headers: this.processRequestHeaders(requestHeaders) as any,
@@ -33,6 +43,7 @@ export class ProxyService {
         validateStatus: (status: number) => status < 500,
       }),
     );
+    this.loggerService.log(`Received response for url "${realUrl}"`);
     const result = await this.getNormalizedContent(
       response.data as unknown as Buffer,
       response.headers,
@@ -78,31 +89,38 @@ export class ProxyService {
       ? responseHeaders['content-type']
       : null;
 
-    if (!contentType || !contentType.includes('text')) {
+    if (!contentType) {
+      this.loggerService.log(`Skipping empty content type`);
       return responseContent;
     }
 
-    let result = responseContent.toString('utf-8');
+    this.loggerService.log(`Content type is "${contentType}"`);
+    let processors: Processor[] = [];
 
-    // relative urls
-    const relativeUrlMatches = result.matchAll(/\"(\/.*?)\"/g);
-
-    for (const match of [...relativeUrlMatches]) {
-      const fullUrl = realUrl + match[1];
-      const newId = await this.generateProxyIdForUrl(fullUrl);
-
-      result = result.replace(match[0], `"${getProxyUrlForId(newId)}"`);
+    switch (true) {
+      case contentType.includes('html'):
+        processors = [this.relativeUrlProcessor, this.absoluteUrlProcessor];
+        break;
+      case contentType.includes('javascript'):
+      case contentType.includes('css'):
+        processors = [this.absoluteUrlProcessor];
+        break;
+      default:
+        this.loggerService.log('No processors for this content type');
+        return responseContent;
     }
 
-    // absolute urls
-    const absoluteUrlMatches = result.matchAll(/\"(http.*?)\"/g);
+    let content = responseContent.toString('utf-8');
 
-    for (const match of [...absoluteUrlMatches]) {
-      const newId = await this.generateProxyIdForUrl(match[1]);
+    const getProxyUrl = async (realUrl: string) => {
+      const proxyId = await this.generateProxyIdForUrl(realUrl);
+      return getProxyUrlForId(proxyId);
+    };
 
-      result = result.replace(match[0], `"${getProxyUrlForId(newId)}"`);
+    for (const processor of processors) {
+      content = await processor.process(content, realUrl, getProxyUrl);
     }
 
-    return result;
+    return content;
   }
 }
