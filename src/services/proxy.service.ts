@@ -1,5 +1,9 @@
 import { HttpService } from '@nestjs/axios';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  RequestTimeoutException,
+} from '@nestjs/common';
 import { catchError, firstValueFrom, throwError } from 'rxjs';
 import { ProxyResponse } from '../models/proxy-response';
 import { ProxyRepository } from '../repositories/proxy.repository';
@@ -8,6 +12,7 @@ import { AbsoluteUrlProcessor } from './processors/absolute-url.processor';
 import { IntegrityProcessor } from './processors/integrity.processor';
 import { Processor } from './processors/processor';
 import { RelativeUrlProcessor } from './processors/relative-url.processor';
+import { StyleUrlProcessor } from './processors/style-url.processor';
 import { UtilsService } from './utils.service';
 
 @Injectable()
@@ -20,6 +25,7 @@ export class ProxyService {
     private absoluteUrlProcessor: AbsoluteUrlProcessor,
     private relativeUrlProcessor: RelativeUrlProcessor,
     private integrityProcessor: IntegrityProcessor,
+    private styleUrlProcessor: StyleUrlProcessor,
   ) {
     loggerService.setContext(ProxyService.name);
   }
@@ -38,20 +44,28 @@ export class ProxyService {
   ): Promise<ProxyResponse> {
     const realUrl: string = await this.proxyRepository.getById(proxyId);
     this.loggerService.log(`Requesting url "${realUrl}"...`);
+    const timeoutTimerMs = 5000;
     const response = await firstValueFrom(
       this.httpService
         .get<string>(realUrl, {
           headers: this.processRequestHeaders(requestHeaders) as any,
           responseType: 'arraybuffer',
+          timeout: timeoutTimerMs,
           validateStatus: (status: number) => status < 500,
         })
         .pipe(
-          catchError(() =>
-            throwError(
-              () =>
-                new BadRequestException(`Failed to request url "${realUrl}"`),
-            ),
-          ),
+          catchError((originalError: Error) => {
+            let error = new BadRequestException(
+              `Failed to request url "${realUrl}"`,
+            );
+            if (originalError.message.includes('timeout')) {
+              error = new RequestTimeoutException(
+                `Timeout for url "${realUrl}" with timer ${timeoutTimerMs}ms`,
+              );
+            }
+
+            return throwError(() => error);
+          }),
         ),
     );
     this.loggerService.log(`Received response for url "${realUrl}"`);
@@ -114,13 +128,14 @@ export class ProxyService {
       case contentType.includes('html'):
         processors = [
           this.relativeUrlProcessor,
+          this.styleUrlProcessor,
           this.absoluteUrlProcessor,
           this.integrityProcessor,
         ];
         break;
       case contentType.includes('javascript'):
       case contentType.includes('css'):
-        processors = [this.absoluteUrlProcessor];
+        processors = [this.styleUrlProcessor, this.absoluteUrlProcessor];
         break;
       default:
         this.loggerService.log('No processors for this content type');

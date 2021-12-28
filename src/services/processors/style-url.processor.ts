@@ -3,9 +3,9 @@ import { CustomLoggerService } from 'src/services/custom-logger.service';
 import { Processor } from './processor';
 
 @Injectable()
-export class RelativeUrlProcessor implements Processor {
+export class StyleUrlProcessor implements Processor {
   constructor(private loggerService: CustomLoggerService) {
-    loggerService.setContext(RelativeUrlProcessor.name);
+    loggerService.setContext(StyleUrlProcessor.name);
   }
 
   async process(
@@ -15,19 +15,22 @@ export class RelativeUrlProcessor implements Processor {
   ): Promise<string> {
     this.loggerService.log(`Starting for "${realUrl}"...`);
 
-    const urlRegexp = /\"(\/.*?)\"/g;
-    const relativeUrlMatches = content.matchAll(urlRegexp);
+    const urlRegexp = /url\(([\w\/.'"-]+)\)/gm;
+    const styleUrlMatches = content.matchAll(urlRegexp);
 
     let result = content;
 
-    for (const match of [...relativeUrlMatches]) {
-      const relativeUrl: string = match[1];
-      this.loggerService.log(`Found match "${relativeUrl}"`);
+    for (const match of [...styleUrlMatches]) {
+      let url = match[1];
+      this.loggerService.log(`Found match "${url}"`);
 
-      const absoluteUrl = realUrl + relativeUrl;
-      const proxyUrl = await getProxyUrl(absoluteUrl);
+      if (url.startsWith('/')) {
+        url = realUrl + url;
+      }
 
-      result = result.replace(match[0], `${proxyUrl}`);
+      const proxyUrl = await getProxyUrl(url);
+
+      result = result.replace(match[0], `url(${proxyUrl})`);
     }
 
     this.loggerService.log(`Finished for "${realUrl}"`);

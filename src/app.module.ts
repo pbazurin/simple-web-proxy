@@ -10,6 +10,7 @@ import { CustomLoggerService } from './services/custom-logger.service';
 import { AbsoluteUrlProcessor } from './services/processors/absolute-url.processor';
 import { IntegrityProcessor } from './services/processors/integrity.processor';
 import { RelativeUrlProcessor } from './services/processors/relative-url.processor';
+import { StyleUrlProcessor } from './services/processors/style-url.processor';
 import { ProxyService } from './services/proxy.service';
 import { UtilsService } from './services/utils.service';
 
@@ -29,6 +30,7 @@ import { UtilsService } from './services/utils.service';
     AbsoluteUrlProcessor,
     RelativeUrlProcessor,
     IntegrityProcessor,
+    StyleUrlProcessor,
     {
       provide: APP_FILTER,
       useClass: AllExceptionsFilter,
