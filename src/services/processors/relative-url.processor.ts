@@ -22,7 +22,7 @@ export class RelativeUrlProcessor implements Processor {
 
     for (const match of [...relativeUrlMatches]) {
       const relativeUrl: string = match[1];
-      this.loggerService.log(`Found match "${relativeUrl}"`);
+      this.loggerService.log(relativeUrl);
 
       const absoluteUrl = realUrl + relativeUrl;
       const proxyUrl = await getProxyUrl(absoluteUrl);

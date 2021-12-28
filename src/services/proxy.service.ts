@@ -121,7 +121,6 @@ export class ProxyService {
       return responseContent;
     }
 
-    this.loggerService.log(`Content type is "${contentType}"`);
     let processors: Processor[] = [];
 
     switch (true) {
@@ -134,11 +133,16 @@ export class ProxyService {
         ];
         break;
       case contentType.includes('javascript'):
+        processors = [this.absoluteUrlProcessor, this.integrityProcessor];
+        break;
       case contentType.includes('css'):
-        processors = [this.styleUrlProcessor, this.absoluteUrlProcessor];
+        processors = [
+          this.styleUrlProcessor,
+          this.absoluteUrlProcessor,
+          this.integrityProcessor,
+        ];
         break;
       default:
-        this.loggerService.log('No processors for this content type');
         return responseContent;
     }
 

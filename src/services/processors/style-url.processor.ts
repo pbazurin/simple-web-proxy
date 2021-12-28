@@ -1,10 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { CustomLoggerService } from 'src/services/custom-logger.service';
+import { UtilsService } from '../utils.service';
 import { Processor } from './processor';
 
 @Injectable()
 export class StyleUrlProcessor implements Processor {
-  constructor(private loggerService: CustomLoggerService) {
+  constructor(
+    private loggerService: CustomLoggerService,
+    private utilsService: UtilsService,
+  ) {
     loggerService.setContext(StyleUrlProcessor.name);
   }
 
@@ -15,16 +19,24 @@ export class StyleUrlProcessor implements Processor {
   ): Promise<string> {
     this.loggerService.log(`Starting for "${realUrl}"...`);
 
-    const urlRegexp = /url\(([\w\/.'"-]+)\)/gm;
+    const urlRegexp = /url\(([^)]+)\)/g;
     const styleUrlMatches = content.matchAll(urlRegexp);
 
     let result = content;
 
     for (const match of [...styleUrlMatches]) {
       let url = match[1];
-      this.loggerService.log(`Found match "${url}"`);
+      url = this.utilsService.removeTrailingQuotes(url);
 
-      if (url.startsWith('/')) {
+      if (url.startsWith('data:')) {
+        continue;
+      }
+
+      this.loggerService.log(url);
+
+      if (url.startsWith('//')) {
+        url = this.utilsService.getProtocolFromUrl(realUrl) + ':' + url;
+      } else if (url.startsWith('/') || !url.startsWith('http')) {
         url = realUrl + url;
       }
 

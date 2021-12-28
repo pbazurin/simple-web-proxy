@@ -21,9 +21,19 @@ export class IntegrityProcessor implements Processor {
     let result = content;
 
     for (const match of [...integrityMatches]) {
-      this.loggerService.log(`Found match "${match[1]}"`);
+      this.loggerService.log(match[1]);
 
       result = result.replace(match[0], '');
+    }
+
+    const integrityHashRegexp = /sha384-[\w\/+]{64}/g;
+    const integrityHashMatches = content.matchAll(integrityHashRegexp);
+
+    for (const match of [...integrityHashMatches]) {
+      const hash = match[0];
+      this.loggerService.log(hash);
+
+      result = result.replace(hash, '');
     }
 
     this.loggerService.log(`Finished for "${realUrl}"`);

@@ -15,7 +15,7 @@ export class AbsoluteUrlProcessor implements Processor {
   ): Promise<string> {
     this.loggerService.log(`Starting for "${realUrl}"...`);
 
-    const urlRegexp = /https?:\/\/[^"' )]+/g;
+    const urlRegexp = /https?:\/\/[^"' \n\r$>)]+/g;
     const absoluteUrlMatches = content.matchAll(urlRegexp);
 
     let result = content;
@@ -23,7 +23,7 @@ export class AbsoluteUrlProcessor implements Processor {
     for (const match of [...absoluteUrlMatches]) {
       const absoluteUrlMatch = match[0];
 
-      this.loggerService.log(`Found match "${absoluteUrlMatch}"`);
+      this.loggerService.log(absoluteUrlMatch);
       const proxyUrl = await getProxyUrl(absoluteUrlMatch);
 
       result = result.replace(absoluteUrlMatch, `${proxyUrl}`);
