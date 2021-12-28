@@ -1,6 +1,6 @@
 import { ArgumentsHost, Catch } from '@nestjs/common';
 import { BaseExceptionFilter } from '@nestjs/core';
-import { CustomLoggerService } from 'src/services/custom-logger.service';
+import { CustomLoggerService } from '../services/custom-logger.service';
 
 @Catch()
 export class AllExceptionsFilter extends BaseExceptionFilter {

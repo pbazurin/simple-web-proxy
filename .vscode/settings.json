@@ -1,4 +1,7 @@
 {
   "files.eol": "\n",
-  "cSpell.words": ["nestjs"]
+  "cSpell.words": [
+    "nestjs"
+  ],
+  "typescript.preferences.importModuleSpecifier": "relative"
 }

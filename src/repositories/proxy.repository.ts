@@ -3,8 +3,8 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { CustomLoggerService } from 'src/services/custom-logger.service';
 import { v5 as uuidv5, validate as uuidValidate } from 'uuid';
+import { CustomLoggerService } from '../services/custom-logger.service';
 
 @Injectable()
 export class ProxyRepository {

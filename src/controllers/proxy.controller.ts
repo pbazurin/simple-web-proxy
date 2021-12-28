@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Post, Req, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { CustomLoggerService } from 'src/services/custom-logger.service';
+import { CustomLoggerService } from '../services/custom-logger.service';
 import { ProxyService } from '../services/proxy.service';
 
 const getProxyUrlForId = (id) => `/p/${id}`;
