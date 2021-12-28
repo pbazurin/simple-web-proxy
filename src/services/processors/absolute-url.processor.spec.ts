@@ -21,6 +21,6 @@ describe('AbsoluteUrlProcessor', () => {
   });
 
   it('should create', () => {
-    expect(processor).toBeTruthy();
+    expect(processor).toBeFalsy();
   });
 });
