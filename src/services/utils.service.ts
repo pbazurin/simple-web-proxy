@@ -11,6 +11,10 @@ export class UtilsService {
   }
 
   getProtocolFromUrl(url: string): string {
-    return url.split(':')[0];
+    return new URL(url).protocol;
+  }
+
+  getOriginFromUrl(url: string): string {
+    return new URL(url).origin;
   }
 }

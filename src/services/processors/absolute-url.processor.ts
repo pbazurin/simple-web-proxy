@@ -13,23 +13,27 @@ export class AbsoluteUrlProcessor implements Processor {
     realUrl: string,
     getProxyUrl: (realUrl: string) => Promise<string>,
   ): Promise<string> {
-    this.loggerService.log(`Starting for "${realUrl}"...`);
-
-    const urlRegexp = /https?:\/\/[^"' \n\r$>)]+/g;
+    const urlRegexp = /https?:\/\/[^"' \n\r$><)]+/g;
     const absoluteUrlMatches = content.matchAll(urlRegexp);
+    const excludedUrls = [
+      'http://www.w3.org/2000/svg',
+      'http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd',
+    ];
 
     let result = content;
 
     for (const match of [...absoluteUrlMatches]) {
       const absoluteUrlMatch = match[0];
 
+      if (excludedUrls.includes(absoluteUrlMatch)) {
+        continue;
+      }
+
       this.loggerService.log(absoluteUrlMatch);
       const proxyUrl = await getProxyUrl(absoluteUrlMatch);
 
       result = result.replace(absoluteUrlMatch, `${proxyUrl}`);
     }
-
-    this.loggerService.log(`Finished for "${realUrl}"`);
 
     return result;
   }

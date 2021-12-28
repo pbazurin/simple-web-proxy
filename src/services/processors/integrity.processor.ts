@@ -13,8 +13,6 @@ export class IntegrityProcessor implements Processor {
     realUrl: string,
     getProxyUrl: (realUrl: string) => Promise<string>,
   ): Promise<string> {
-    this.loggerService.log(`Starting for "${realUrl}"...`);
-
     const integrityRegexp = /integrity=\"(.*?)\"/g;
     const integrityMatches = content.matchAll(integrityRegexp);
 
@@ -35,8 +33,6 @@ export class IntegrityProcessor implements Processor {
 
       result = result.replace(hash, '');
     }
-
-    this.loggerService.log(`Finished for "${realUrl}"`);
 
     return result;
   }

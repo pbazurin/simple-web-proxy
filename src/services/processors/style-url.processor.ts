@@ -17,9 +17,7 @@ export class StyleUrlProcessor implements Processor {
     realUrl: string,
     getProxyUrl: (realUrl: string) => Promise<string>,
   ): Promise<string> {
-    this.loggerService.log(`Starting for "${realUrl}"...`);
-
-    const urlRegexp = /url\(([^)]+)\)/g;
+    const urlRegexp = /url\(([^)(]+)\)/g;
     const styleUrlMatches = content.matchAll(urlRegexp);
 
     let result = content;
@@ -35,17 +33,17 @@ export class StyleUrlProcessor implements Processor {
       this.loggerService.log(url);
 
       if (url.startsWith('//')) {
-        url = this.utilsService.getProtocolFromUrl(realUrl) + ':' + url;
-      } else if (url.startsWith('/') || !url.startsWith('http')) {
-        url = realUrl + url;
+        url = this.utilsService.getProtocolFromUrl(realUrl) + url;
+      } else if (url.startsWith('/')) {
+        url = this.utilsService.getOriginFromUrl(realUrl) + url;
+      } else if (!url.startsWith('http')) {
+        url = this.utilsService.getOriginFromUrl(realUrl) + '/' + url;
       }
 
       const proxyUrl = await getProxyUrl(url);
 
       result = result.replace(match[0], `url(${proxyUrl})`);
     }
-
-    this.loggerService.log(`Finished for "${realUrl}"`);
 
     return result;
   }
