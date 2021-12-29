@@ -1,14 +1,20 @@
 ## Description
 
-Simple web proxy - opens websites on behalf of the server.
-
-Site content is redirected back to the user browser.
+Simple web proxy - allows opening websites without any additional VPN setup.
 
 [Open Simple Web Proxy](https://swproxy.herokuapp.com/)
 
+## How it works
+
+The target URL is sent to the proxy server, after that proxy server requests the URL and sends the content back to the user.
+
+## Advantages
+
+Requests are anonymous, no PII data or user location is sent, no additional software/steps are required to set up the proxy.
+
 ## Technical details
 
-Based on [Nest](https://github.com/nestjs/nest).
+Powered by [Nest](https://github.com/nestjs/nest).
 
 Deployed to [Heroku](https://www.heroku.com/).
 
