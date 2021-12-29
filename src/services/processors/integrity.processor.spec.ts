@@ -21,6 +21,7 @@ describe('IntegrityProcessor', () => {
   });
 
   it('should remove integrity attributes', async () => {
+    // Arrange
     const testContent = `
     <script defer src="https://use.fontawesome.com/releases/v5.1.1/js/solid.js" integrity="sha384-GXi56ipjsBwAe6v5X4xSrVNXGOmpdJYZEEh/0/GqJ3JTHsfDsF8v0YQvZCJYAiGu" crossorigin="anonymous"></script>
     <script defer src="https://use.fontawesome.com/releases/v5.1.1/js/brands.js" integrity="sha384-0inRy4HkP0hJ038ZyfQ4vLl+F4POKbqnaUB6ewmU4dWP0ki8Q27A0VFiVRIpscvL" crossorigin="anonymous"></script>
@@ -32,12 +33,15 @@ describe('IntegrityProcessor', () => {
     <script defer src="https://use.fontawesome.com/releases/v5.1.1/js/fontawesome.js"  crossorigin="anonymous"></script>
     `;
 
+    // Act
     const result = await processor.process(testContent);
 
+    // Assert
     expect(result).toBe(expectedContent);
   });
 
   it('should remove integrity hashes', async () => {
+    // Arrange
     const testContent = `
     some.integrity = 'sha384-GXi56ipjsBwAe6v5X4xSrVNXGOmpdJYZEEh/0/GqJ3JTHsfDsF8v0YQvZCJYAiGu';
     another.integrity = "sha384-0inRy4HkP0hJ038ZyfQ4vLl+F4POKbqnaUB6ewmU4dWP0ki8Q27A0VFiVRIpscvL";
@@ -51,8 +55,10 @@ describe('IntegrityProcessor', () => {
     
     `;
 
+    // Act
     const result = await processor.process(testContent);
 
+    // Assert
     expect(result).toBe(expectedContent);
   });
 });

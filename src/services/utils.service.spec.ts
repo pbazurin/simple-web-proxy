@@ -16,7 +16,10 @@ describe('UtilsService', () => {
     ];
 
     test.each(testCases)('given %p, returns %p', (url, expectedResult) => {
+      // Act
       const result = service.removeTrailingSlashes(url);
+
+      // Assert
       expect(result).toEqual(expectedResult);
     });
   });
@@ -30,7 +33,10 @@ describe('UtilsService', () => {
     ];
 
     test.each(testCases)('given %p, returns %p', (url, expectedResult) => {
+      // Act
       const result = service.removeTrailingQuotes(url);
+
+      // Assert
       expect(result).toEqual(expectedResult);
     });
   });
@@ -44,7 +50,10 @@ describe('UtilsService', () => {
     ];
 
     test.each(testCases)('given %p, returns %p', (url, expectedResult) => {
+      // Act
       const result = service.getProtocolFromUrl(url);
+
+      // Assert
       expect(result).toEqual(expectedResult);
     });
   });
@@ -58,7 +67,10 @@ describe('UtilsService', () => {
     ];
 
     test.each(testCases)('given %p, returns %p', (url, expectedResult) => {
+      // Act
       const result = service.getOriginFromUrl(url);
+
+      // Assert
       expect(result).toEqual(expectedResult);
     });
   });

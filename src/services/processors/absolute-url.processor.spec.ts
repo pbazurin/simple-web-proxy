@@ -50,11 +50,14 @@ describe('AbsoluteUrlProcessor', () => {
     test.each(testCases)(
       'given %p, returns %p',
       async (url, expectedResult) => {
+        // Act
         const result = await processor.process(
           url,
           testRealUrl,
           testGetProxyUrl,
         );
+
+        // Assert
         expect(result).toEqual(expectedResult);
       },
     );
@@ -71,11 +74,14 @@ describe('AbsoluteUrlProcessor', () => {
     test.each(testCases)(
       'given %p, returns %p',
       async (url, expectedResult) => {
+        // Act
         const result = await processor.process(
           url,
           testRealUrl,
           testGetProxyUrl,
         );
+
+        // Assert
         expect(result).toEqual(expectedResult);
       },
     );
@@ -93,11 +99,14 @@ describe('AbsoluteUrlProcessor', () => {
     test.each(testCases)(
       'given %p, returns %p',
       async (url, expectedResult) => {
+        // Act
         const result = await processor.process(
           url,
           testRealUrl,
           testGetProxyUrl,
         );
+
+        // Assert
         expect(result).toEqual(expectedResult);
       },
     );
