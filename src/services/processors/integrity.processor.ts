@@ -8,11 +8,7 @@ export class IntegrityProcessor implements Processor {
     loggerService.setContext(IntegrityProcessor.name);
   }
 
-  async process(
-    content: string,
-    realUrl: string,
-    getProxyUrl: (realUrl: string) => Promise<string>,
-  ): Promise<string> {
+  async process(content: string): Promise<string> {
     const integrityRegexp = /integrity=\"(.*?)\"/g;
     const integrityMatches = content.matchAll(integrityRegexp);
 

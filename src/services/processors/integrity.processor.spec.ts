@@ -21,6 +21,6 @@ describe('IntegrityProcessor', () => {
   });
 
   it('should create', () => {
-    expect(processor).toBeFalsy();
+    expect(processor).toBeTruthy();
   });
 });
