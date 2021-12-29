@@ -7,14 +7,22 @@ export class UtilsService {
   }
 
   removeTrailingQuotes(url: string): string {
-    return url.replace(/^["']|["']$/g, '');
+    return url.replace(/^["'](.*)["']$/, '$1');
   }
 
   getProtocolFromUrl(url: string): string {
-    return new URL(url).protocol;
+    try {
+      return new URL(url).protocol;
+    } catch {
+      return '';
+    }
   }
 
   getOriginFromUrl(url: string): string {
-    return new URL(url).origin;
+    try {
+      return new URL(url).origin;
+    } catch {
+      return '';
+    }
   }
 }
