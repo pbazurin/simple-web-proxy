@@ -153,13 +153,13 @@ export class ProxyService {
       return getProxyUrlForId(proxyId);
     };
 
-    this.loggerService.log(`Starting processing "${realUrl}"`);
+    this.loggerService.log(`Starting processing url "${realUrl}"`);
 
     for (const processor of processors) {
       content = await processor.process(content, realUrl, getProxyUrl);
     }
 
-    this.loggerService.log(`Finished processing "${realUrl}"`);
+    this.loggerService.log(`Finished processing url "${realUrl}"`);
 
     return content;
   }
