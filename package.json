@@ -1,6 +1,9 @@
 {
   "name": "simple-web-proxy",
   "version": "0.0.1",
+  "engines": {
+    "npm": "8.x"
+  },
   "description": "Simple web proxy",
   "author": "Petr Bazurin",
   "private": true,
