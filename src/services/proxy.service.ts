@@ -32,9 +32,7 @@ export class ProxyService {
 
   async generateProxyIdForUrl(url: string): Promise<string> {
     const normalizedUrl = this.utilsService.removeTrailingSlashes(url);
-    const proxyId = this.proxyRepository.add(normalizedUrl);
-
-    return proxyId;
+    return this.proxyRepository.add(normalizedUrl);
   }
 
   async getContentByProxyId(
@@ -148,8 +146,8 @@ export class ProxyService {
 
     let content = responseContent.toString('utf-8');
 
-    const getProxyUrl = async (realUrl: string) => {
-      const proxyId = await this.generateProxyIdForUrl(realUrl);
+    const getProxyUrl = async (url: string) => {
+      const proxyId = await this.generateProxyIdForUrl(url);
       return getProxyUrlForId(proxyId);
     };
 
