@@ -40,14 +40,14 @@ export class ProxyService {
       : null;
 
     const getProxyUrl = async (url: string) => {
-      const proxyId = await this.generateProxyIdForUrl(url);
-      return getProxyUrlForId(proxyId);
+      const newProxyId = await this.generateProxyIdForUrl(url);
+      return getProxyUrlForId(newProxyId);
     };
 
     const processedContent: Buffer | string =
       await this.contentProcessingManagerService.getProcessedContent(
-        response.data as unknown as Buffer,
-        contentType as string,
+        response.data as Buffer,
+        contentType,
         realUrl,
         getProxyUrl,
       );
