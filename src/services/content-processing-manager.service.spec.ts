@@ -1,40 +1,35 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { of } from 'rxjs';
-import { ProxyRepository } from '../repositories/proxy.repository';
 import { ContentProcessingManagerService } from './content-processing-manager.service';
 import { CustomLoggerService } from './custom-logger.service';
 import { CustomLoggerServiceMock } from './custom-logger.service.mock';
-import { HttpWrapperService } from './http-wrapper.service';
-import { ProxyService } from './proxy.service';
+import { AbsoluteUrlProcessor } from './processors/absolute-url.processor';
+import { IntegrityProcessor } from './processors/integrity.processor';
+import { RelativeUrlProcessor } from './processors/relative-url.processor';
+import { StyleUrlProcessor } from './processors/style-url.processor';
 import { UtilsService } from './utils.service';
 
-describe('ProxyService', () => {
-  let service: ProxyService;
+describe('ContentProcessingManagerService', () => {
+  let service: ContentProcessingManagerService;
 
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
       providers: [
-        ProxyService,
-        ProxyRepository,
+        ContentProcessingManagerService,
+        AbsoluteUrlProcessor,
+        RelativeUrlProcessor,
+        IntegrityProcessor,
+        StyleUrlProcessor,
         UtilsService,
-        {
-          provide: ContentProcessingManagerService,
-          useValue: {},
-        },
         {
           provide: CustomLoggerService,
           useValue: CustomLoggerServiceMock,
         },
-        {
-          provide: HttpWrapperService,
-          useValue: {
-            get: () => of(null),
-          },
-        },
       ],
     }).compile();
 
-    service = app.get<ProxyService>(ProxyService);
+    service = app.get<ContentProcessingManagerService>(
+      ContentProcessingManagerService,
+    );
   });
 
   it('should create', () => {

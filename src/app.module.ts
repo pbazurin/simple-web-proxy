@@ -6,7 +6,9 @@ import { join } from 'path';
 import { ProxyController } from './controllers/proxy.controller';
 import { AllExceptionsFilter } from './filters/all-exceptions.filter';
 import { ProxyRepository } from './repositories/proxy.repository';
+import { ContentProcessingManagerService } from './services/content-processing-manager.service';
 import { CustomLoggerService } from './services/custom-logger.service';
+import { HttpWrapperService } from './services/http-wrapper.service';
 import { AbsoluteUrlProcessor } from './services/processors/absolute-url.processor';
 import { IntegrityProcessor } from './services/processors/integrity.processor';
 import { RelativeUrlProcessor } from './services/processors/relative-url.processor';
@@ -25,8 +27,10 @@ import { UtilsService } from './services/utils.service';
   providers: [
     CustomLoggerService,
     UtilsService,
+    HttpWrapperService,
     ProxyService,
     ProxyRepository,
+    ContentProcessingManagerService,
     AbsoluteUrlProcessor,
     RelativeUrlProcessor,
     IntegrityProcessor,

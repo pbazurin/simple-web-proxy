@@ -1,32 +1,23 @@
+import { HttpService } from '@nestjs/axios';
 import { Test, TestingModule } from '@nestjs/testing';
 import { of } from 'rxjs';
-import { ProxyRepository } from '../repositories/proxy.repository';
-import { ContentProcessingManagerService } from './content-processing-manager.service';
 import { CustomLoggerService } from './custom-logger.service';
 import { CustomLoggerServiceMock } from './custom-logger.service.mock';
 import { HttpWrapperService } from './http-wrapper.service';
-import { ProxyService } from './proxy.service';
-import { UtilsService } from './utils.service';
 
-describe('ProxyService', () => {
-  let service: ProxyService;
+describe('HttpWrapperService', () => {
+  let service: HttpWrapperService;
 
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
       providers: [
-        ProxyService,
-        ProxyRepository,
-        UtilsService,
-        {
-          provide: ContentProcessingManagerService,
-          useValue: {},
-        },
+        HttpWrapperService,
         {
           provide: CustomLoggerService,
           useValue: CustomLoggerServiceMock,
         },
         {
-          provide: HttpWrapperService,
+          provide: HttpService,
           useValue: {
             get: () => of(null),
           },
@@ -34,7 +25,7 @@ describe('ProxyService', () => {
       ],
     }).compile();
 
-    service = app.get<ProxyService>(ProxyService);
+    service = app.get<HttpWrapperService>(HttpWrapperService);
   });
 
   it('should create', () => {
