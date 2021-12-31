@@ -1,7 +1,7 @@
 import { HttpService } from '@nestjs/axios';
 import { BadRequestException, RequestTimeoutException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { AxiosRequestHeaders } from 'axios';
+import { AxiosRequestConfig, AxiosRequestHeaders, AxiosResponse } from 'axios';
 import { of, throwError } from 'rxjs';
 import { CustomLoggerService } from './custom-logger.service';
 import { CustomLoggerServiceMock } from './custom-logger.service.mock';
@@ -79,5 +79,41 @@ describe('HttpWrapperService', () => {
     await expect(
       async () => await service.get(testUrl, testHeaders),
     ).rejects.toThrow(RequestTimeoutException);
+  });
+
+  describe('validateStatus should throw only on server errors', () => {
+    const testCases: [number, boolean][] = [
+      [101, true],
+      [202, true],
+      [303, true],
+      [404, true],
+      [505, false],
+    ];
+
+    test.each(testCases)(
+      'given %p, returns %p',
+      async (status, expectedResult) => {
+        // Arrange
+        const testUrl = 'https://test.com/something';
+        const testHeaders: AxiosRequestHeaders = { test: 'header' };
+        let validateFunc: (status: number) => boolean;
+        jest
+          .spyOn(httpService, 'get')
+          .mockImplementation((url: string, config?: AxiosRequestConfig) => {
+            expect(config?.validateStatus).toBeTruthy();
+
+            validateFunc = config?.validateStatus;
+
+            return of({ data: testResponse } as AxiosResponse);
+          });
+
+        // Act
+        await service.get(testUrl, testHeaders);
+        const result = validateFunc(status);
+
+        // Assert
+        expect(result).toEqual(expectedResult);
+      },
+    );
   });
 });
