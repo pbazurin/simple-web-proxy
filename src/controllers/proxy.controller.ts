@@ -1,12 +1,13 @@
 import { Body, Controller, Get, Param, Post, Req, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
+import { ProxyResponse } from '../models/proxy-response';
 import { CustomLoggerService } from '../services/custom-logger.service';
 import { ProxyService } from '../services/proxy.service';
 
-const getProxyUrlForId = (id) => `/p/${id}`;
-
 @Controller('p')
 export class ProxyController {
+  private readonly getProxyUrlForId = (id: string) => `/p/${id}`;
+
   constructor(
     private proxyService: ProxyService,
     private loggerService: CustomLoggerService,
@@ -21,11 +22,12 @@ export class ProxyController {
     @Res() response: Response,
   ): Promise<void> {
     try {
-      const proxyResponse = await this.proxyService.getContentByProxyId(
-        proxyId,
-        request.headers,
-        getProxyUrlForId,
-      );
+      const proxyResponse: ProxyResponse =
+        await this.proxyService.getContentByProxyId(
+          proxyId,
+          request.headers,
+          this.getProxyUrlForId,
+        );
 
       response.status(proxyResponse.status);
       Object.keys(proxyResponse.headers).forEach((headerName: string) =>
@@ -51,6 +53,6 @@ export class ProxyController {
 
     const proxyId: string = await this.proxyService.generateProxyIdForUrl(url);
 
-    response.redirect(getProxyUrlForId(proxyId));
+    response.redirect(this.getProxyUrlForId(proxyId));
   }
 }

@@ -16,7 +16,7 @@ describe('ContentProcessingManagerService', () => {
   let styleUrlProcessorSpy: jest.SpyInstance;
 
   const processorMock = {
-    process: async (content: string) => Promise.resolve(content),
+    process: async (content: string) => content,
   };
 
   beforeEach(async () => {
@@ -73,7 +73,7 @@ describe('ContentProcessingManagerService', () => {
     // Arrange
     const testContent: Buffer = Buffer.from('test buffer');
     const testUrl = 'test url';
-    const testGetProxyId = async (url: string) => Promise.resolve(url);
+    const testGetProxyId = async (url: string) => url;
 
     // Act
     const result: Buffer | string = await service.getProcessedContent(
@@ -96,7 +96,7 @@ describe('ContentProcessingManagerService', () => {
     const testContent: Buffer = Buffer.from('test buffer');
     const testUrl = 'test url';
     const htmlContentType = 'multipart/form-data; boundary=something';
-    const testGetProxyId = async (url: string) => Promise.resolve(url);
+    const testGetProxyId = async (url: string) => url;
 
     // Act
     const result: Buffer | string = await service.getProcessedContent(
@@ -119,7 +119,7 @@ describe('ContentProcessingManagerService', () => {
     const testContent = 'test buffer';
     const testUrl = 'test url';
     const htmlContentType = 'text/html; charset=UTF-8';
-    const testGetProxyId = async (url: string) => Promise.resolve(url);
+    const testGetProxyId = async (url: string) => url;
 
     // Act
     const result: Buffer | string = await service.getProcessedContent(
@@ -142,7 +142,7 @@ describe('ContentProcessingManagerService', () => {
     const testContent = 'test buffer';
     const testUrl = 'test url';
     const jsContentType = 'text/javascript';
-    const testGetProxyId = async (url: string) => Promise.resolve(url);
+    const testGetProxyId = async (url: string) => url;
 
     // Act
     const result: Buffer | string = await service.getProcessedContent(
@@ -165,7 +165,7 @@ describe('ContentProcessingManagerService', () => {
     const testContent = 'test buffer';
     const testUrl = 'test url';
     const cssContentType = 'text/css';
-    const testGetProxyId = async (url: string) => Promise.resolve(url);
+    const testGetProxyId = async (url: string) => url;
 
     // Act
     const result: Buffer | string = await service.getProcessedContent(

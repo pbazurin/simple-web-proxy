@@ -26,9 +26,7 @@ describe('StyleUrlProcessor', () => {
   const testRealUrlOrigin = testRealUrlProtocol + '//test';
   const testRealUrl = testRealUrlOrigin + '/real/url';
   const generateTestUrl = (url: string) => `proxy>>${url}<<proxy`;
-  const testGetProxyUrl = async (url: string) => {
-    return Promise.resolve(generateTestUrl(url));
-  };
+  const testGetProxyUrl = async (url: string) => generateTestUrl(url);
 
   describe('valid urls', () => {
     const testCases: [string, string][] = [

@@ -26,9 +26,7 @@ describe('RelativeUrlProcessor', () => {
   const testRealUrlOrigin = testRealUrlProtocol + '//test';
   const testRealUrl = testRealUrlOrigin + '/real/url';
   const generateTestUrl = (url: string) => `proxy>>${url}<<proxy`;
-  const testGetProxyUrl = async (url: string) => {
-    return Promise.resolve(generateTestUrl(url));
-  };
+  const testGetProxyUrl = async (url: string) => generateTestUrl(url);
 
   describe('valid relative urls', () => {
     const testCases: [string, string][] = [
