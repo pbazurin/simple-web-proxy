@@ -21,9 +21,10 @@ describe('AllExceptionsFilter', () => {
           provide: HttpAdapterHost,
           useValue: {
             httpAdapter: {
-              reply: () => null,
+              reply: (response: any, body: any) =>
+                response && body ? null : undefined,
             },
-          },
+          } as HttpAdapterHost,
         },
       ],
     }).compile();

@@ -24,8 +24,9 @@ describe('HttpWrapperService', () => {
         {
           provide: HttpService,
           useValue: {
-            get: () => of({ data: testResponse }),
-          },
+            get: (url: string) =>
+              url ? of({ data: testResponse }) : throwError(() => 'empty url'),
+          } as HttpService,
         },
       ],
     }).compile();

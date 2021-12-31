@@ -19,9 +19,15 @@ describe('ProxyController', () => {
         {
           provide: ProxyService,
           useValue: {
-            getContentByProxyId: async () => null,
-            generateProxyIdForUrl: async () => null,
-          },
+            getContentByProxyId: async (
+              proxyId: string,
+              requestHeaders: Record<string, string | string[]>,
+              getProxyUrlForId: (id: string) => string,
+            ) =>
+              proxyId && requestHeaders && getProxyUrlForId ? null : undefined,
+            generateProxyIdForUrl: async (url: string) =>
+              url ? null : undefined,
+          } as ProxyService,
         },
         {
           provide: CustomLoggerService,

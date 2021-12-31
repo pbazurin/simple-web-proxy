@@ -4,9 +4,11 @@ import { CustomLoggerService } from './custom-logger.service';
 import { CustomLoggerServiceMock } from './custom-logger.service.mock';
 import { AbsoluteUrlProcessor } from './processors/absolute-url.processor';
 import { IntegrityProcessor } from './processors/integrity.processor';
+import { Processor } from './processors/processor';
 import { RelativeUrlProcessor } from './processors/relative-url.processor';
 import { StyleUrlProcessor } from './processors/style-url.processor';
 import { UtilsService } from './utils.service';
+import { UtilsServiceMock } from './utils.service.mock';
 
 describe('ContentProcessingManagerService', () => {
   let service: ContentProcessingManagerService;
@@ -15,34 +17,37 @@ describe('ContentProcessingManagerService', () => {
   let integrityProcessorSpy: jest.SpyInstance;
   let styleUrlProcessorSpy: jest.SpyInstance;
 
-  const processorMock = {
+  const processorMock: Processor = {
     process: async (content: string) => content,
-  };
+  } as Processor;
 
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
       providers: [
         ContentProcessingManagerService,
-        UtilsService,
+        {
+          provide: UtilsService,
+          useValue: UtilsServiceMock,
+        },
         {
           provide: CustomLoggerService,
           useValue: CustomLoggerServiceMock,
         },
         {
           provide: AbsoluteUrlProcessor,
-          useValue: { ...processorMock },
+          useValue: { ...processorMock } as AbsoluteUrlProcessor,
         },
         {
           provide: RelativeUrlProcessor,
-          useValue: { ...processorMock },
+          useValue: { ...processorMock } as RelativeUrlProcessor,
         },
         {
           provide: IntegrityProcessor,
-          useValue: { ...processorMock },
+          useValue: { ...processorMock } as IntegrityProcessor,
         },
         {
           provide: StyleUrlProcessor,
-          useValue: { ...processorMock },
+          useValue: { ...processorMock } as StyleUrlProcessor,
         },
       ],
     }).compile();
