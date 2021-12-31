@@ -26,7 +26,7 @@ describe('ProxyRepository', () => {
     const testValue = 'some test value';
 
     // Act
-    const result = await repository.add(testValue);
+    const result: string = await repository.add(testValue);
 
     // Assert
     expect(result).toBeTruthy();
@@ -42,7 +42,7 @@ describe('ProxyRepository', () => {
 
     test.each(testCases)('given %p, returns %p', async (id, expectedResult) => {
       // Act
-      const result = await repository.isValidIdFormat(id);
+      const result: boolean = await repository.isValidIdFormat(id);
 
       // Assert
       expect(result).toEqual(expectedResult);
@@ -76,7 +76,7 @@ describe('ProxyRepository', () => {
       const id = await repository.add(testValue);
 
       // Act
-      const result = await repository.getById(id);
+      const result: string = await repository.getById(id);
 
       // Assert
       expect(result).toBe(testValue);

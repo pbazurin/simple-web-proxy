@@ -17,7 +17,7 @@ describe('UtilsService', () => {
 
     test.each(testCases)('given %p, returns %p', (url, expectedResult) => {
       // Act
-      const result = service.removeTrailingSlashes(url);
+      const result: string = service.removeTrailingSlashes(url);
 
       // Assert
       expect(result).toEqual(expectedResult);
@@ -34,7 +34,7 @@ describe('UtilsService', () => {
 
     test.each(testCases)('given %p, returns %p', (url, expectedResult) => {
       // Act
-      const result = service.removeTrailingQuotes(url);
+      const result: string = service.removeTrailingQuotes(url);
 
       // Assert
       expect(result).toEqual(expectedResult);
@@ -51,7 +51,7 @@ describe('UtilsService', () => {
 
     test.each(testCases)('given %p, returns %p', (url, expectedResult) => {
       // Act
-      const result = service.getProtocolFromUrl(url);
+      const result: string = service.getProtocolFromUrl(url);
 
       // Assert
       expect(result).toEqual(expectedResult);
@@ -68,7 +68,7 @@ describe('UtilsService', () => {
 
     test.each(testCases)('given %p, returns %p', (url, expectedResult) => {
       // Act
-      const result = service.getOriginFromUrl(url);
+      const result: string = service.getOriginFromUrl(url);
 
       // Assert
       expect(result).toEqual(expectedResult);

@@ -34,7 +34,7 @@ describe('IntegrityProcessor', () => {
     `;
 
     // Act
-    const result = await processor.process(testContent);
+    const result: string = await processor.process(testContent);
 
     // Assert
     expect(result).toBe(expectedContent);
@@ -56,7 +56,7 @@ describe('IntegrityProcessor', () => {
     `;
 
     // Act
-    const result = await processor.process(testContent);
+    const result: string = await processor.process(testContent);
 
     // Assert
     expect(result).toBe(expectedContent);

@@ -41,7 +41,7 @@ describe('HttpWrapperService', () => {
     const httpGetSpy = jest.spyOn(httpService, 'get');
 
     // Act
-    const result = await service.get(testUrl, testHeaders);
+    const result: AxiosResponse = await service.get(testUrl, testHeaders);
 
     // Assert
     expect(result).toBeTruthy();
@@ -109,7 +109,7 @@ describe('HttpWrapperService', () => {
 
         // Act
         await service.get(testUrl, testHeaders);
-        const result = validateFunc(status);
+        const result: boolean = validateFunc(status);
 
         // Assert
         expect(result).toEqual(expectedResult);

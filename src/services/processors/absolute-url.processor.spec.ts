@@ -51,7 +51,7 @@ describe('AbsoluteUrlProcessor', () => {
       'given %p, returns %p',
       async (url, expectedResult) => {
         // Act
-        const result = await processor.process(
+        const result: string = await processor.process(
           url,
           testRealUrl,
           testGetProxyUrl,
@@ -75,7 +75,7 @@ describe('AbsoluteUrlProcessor', () => {
       'given %p, returns %p',
       async (url, expectedResult) => {
         // Act
-        const result = await processor.process(
+        const result: string = await processor.process(
           url,
           testRealUrl,
           testGetProxyUrl,
@@ -100,7 +100,7 @@ describe('AbsoluteUrlProcessor', () => {
       'given %p, returns %p',
       async (url, expectedResult) => {
         // Act
-        const result = await processor.process(
+        const result: string = await processor.process(
           url,
           testRealUrl,
           testGetProxyUrl,

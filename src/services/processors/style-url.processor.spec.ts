@@ -53,7 +53,7 @@ describe('StyleUrlProcessor', () => {
       'given %p, returns %p',
       async (url, expectedResult) => {
         // Act
-        const result = await processor.process(
+        const result: string = await processor.process(
           url,
           testRealUrl,
           testGetProxyUrl,
@@ -78,7 +78,7 @@ describe('StyleUrlProcessor', () => {
       'given %p, returns %p',
       async (url, expectedResult) => {
         // Act
-        const result = await processor.process(
+        const result: string = await processor.process(
           url,
           testRealUrl,
           testGetProxyUrl,
@@ -99,7 +99,7 @@ describe('StyleUrlProcessor', () => {
       'given %p, returns %p',
       async (url, expectedResult) => {
         // Act
-        const result = await processor.process(
+        const result: string = await processor.process(
           url,
           testRealUrl,
           testGetProxyUrl,
