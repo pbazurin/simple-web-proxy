@@ -8,6 +8,7 @@ import { AllExceptionsFilter } from './filters/all-exceptions.filter';
 import { ProxyRepository } from './repositories/proxy.repository';
 import { ContentProcessingManagerService } from './services/content-processing-manager.service';
 import { CustomLoggerService } from './services/custom-logger.service';
+import { HeadersProcessingManager } from './services/headers-processing-manager.service';
 import { HttpWrapperService } from './services/http-wrapper.service';
 import { AbsoluteUrlProcessor } from './services/processors/absolute-url.processor';
 import { IntegrityProcessor } from './services/processors/integrity.processor';
@@ -30,6 +31,7 @@ import { UtilsService } from './services/utils.service';
     HttpWrapperService,
     ProxyService,
     ProxyRepository,
+    HeadersProcessingManager,
     ContentProcessingManagerService,
     AbsoluteUrlProcessor,
     RelativeUrlProcessor,

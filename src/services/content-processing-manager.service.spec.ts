@@ -76,7 +76,7 @@ describe('ContentProcessingManagerService', () => {
     const testGetProxyId = async (url: string) => url;
 
     // Act
-    const result: Buffer | string = await service.getProcessedContent(
+    const result: Buffer | string = await service.processContent(
       testContent,
       null,
       testUrl,
@@ -99,7 +99,7 @@ describe('ContentProcessingManagerService', () => {
     const testGetProxyId = async (url: string) => url;
 
     // Act
-    const result: Buffer | string = await service.getProcessedContent(
+    const result: Buffer | string = await service.processContent(
       testContent,
       htmlContentType,
       testUrl,
@@ -122,7 +122,7 @@ describe('ContentProcessingManagerService', () => {
     const testGetProxyId = async (url: string) => url;
 
     // Act
-    const result: Buffer | string = await service.getProcessedContent(
+    const result: Buffer | string = await service.processContent(
       Buffer.from(testContent),
       htmlContentType,
       testUrl,
@@ -145,7 +145,7 @@ describe('ContentProcessingManagerService', () => {
     const testGetProxyId = async (url: string) => url;
 
     // Act
-    const result: Buffer | string = await service.getProcessedContent(
+    const result: Buffer | string = await service.processContent(
       Buffer.from(testContent),
       jsContentType,
       testUrl,
@@ -168,7 +168,7 @@ describe('ContentProcessingManagerService', () => {
     const testGetProxyId = async (url: string) => url;
 
     // Act
-    const result: Buffer | string = await service.getProcessedContent(
+    const result: Buffer | string = await service.processContent(
       Buffer.from(testContent),
       cssContentType,
       testUrl,

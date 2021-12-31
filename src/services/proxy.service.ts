@@ -3,6 +3,7 @@ import { ProxyResponse } from '../models/proxy-response';
 import { ProxyRepository } from '../repositories/proxy.repository';
 import { ContentProcessingManagerService } from './content-processing-manager.service';
 import { CustomLoggerService } from './custom-logger.service';
+import { HeadersProcessingManager } from './headers-processing-manager.service';
 import { HttpWrapperService } from './http-wrapper.service';
 import { UtilsService } from './utils.service';
 
@@ -13,6 +14,7 @@ export class ProxyService {
     private httpWrapperService: HttpWrapperService,
     private utilsService: UtilsService,
     private loggerService: CustomLoggerService,
+    private headersProcessingManager: HeadersProcessingManager,
     private contentProcessingManagerService: ContentProcessingManagerService,
   ) {
     loggerService.setContext(ProxyService.name);
@@ -33,7 +35,9 @@ export class ProxyService {
     const realUrl: string = await this.proxyRepository.getById(proxyId);
     const response = await this.httpWrapperService.get(
       realUrl,
-      this.processRequestHeaders(requestHeaders) as any,
+      this.headersProcessingManager.processRequestHeaders(
+        requestHeaders,
+      ) as any,
     );
     const contentType = response.headers
       ? response.headers['content-type']
@@ -45,7 +49,7 @@ export class ProxyService {
     };
 
     const processedContent: Buffer | string =
-      await this.contentProcessingManagerService.getProcessedContent(
+      await this.contentProcessingManagerService.processContent(
         response.data as Buffer,
         contentType,
         realUrl,
@@ -57,30 +61,9 @@ export class ProxyService {
     return {
       status: response.status,
       body: processedContent,
-      headers: this.processResponseHeaders(response.headers),
+      headers: this.headersProcessingManager.processResponseHeaders(
+        response.headers,
+      ),
     };
-  }
-
-  private processRequestHeaders(
-    requestHeaders: Record<string, string | string[]>,
-  ): Record<string, string | string[]> {
-    const excludedHeaderNames = ['host', 'referer', 'user-agent'];
-    const result: Record<string, string | string[]> = {};
-
-    Object.keys(requestHeaders).forEach((headerName: string) => {
-      if (!excludedHeaderNames.includes(headerName)) {
-        result[headerName] = requestHeaders[headerName];
-      }
-    });
-
-    result['accept-encoding'] = 'gzip, deflate';
-
-    return result;
-  }
-
-  private processResponseHeaders(
-    responseHeaders: Record<string, string | string[]>,
-  ): Record<string, string | string[]> {
-    return responseHeaders;
   }
 }

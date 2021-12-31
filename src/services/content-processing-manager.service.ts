@@ -18,7 +18,7 @@ export class ContentProcessingManagerService {
     loggerService.setContext(ContentProcessingManagerService.name);
   }
 
-  async getProcessedContent(
+  async processContent(
     contentBuffer: Buffer,
     contentType: string,
     realUrl: string,

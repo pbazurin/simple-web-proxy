@@ -4,6 +4,7 @@ import { ProxyRepository } from '../repositories/proxy.repository';
 import { ContentProcessingManagerService } from './content-processing-manager.service';
 import { CustomLoggerService } from './custom-logger.service';
 import { CustomLoggerServiceMock } from './custom-logger.service.mock';
+import { HeadersProcessingManager } from './headers-processing-manager.service';
 import { HttpWrapperService } from './http-wrapper.service';
 import { ProxyService } from './proxy.service';
 import { UtilsService } from './utils.service';
@@ -19,6 +20,10 @@ describe('ProxyService', () => {
         UtilsService,
         {
           provide: ContentProcessingManagerService,
+          useValue: {},
+        },
+        {
+          provide: HeadersProcessingManager,
           useValue: {},
         },
         {
