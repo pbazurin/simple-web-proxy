@@ -6,7 +6,7 @@ Simple web proxy - allows opening websites without any additional VPN setup.
 
 ## How it works
 
-The target URL is sent to the proxy server, after that proxy server requests the URL and sends the content back to the user.
+The target URL is sent to the proxy server, after that proxy server requests the URL and sends the response back to the user.
 
 ## Advantages
 
